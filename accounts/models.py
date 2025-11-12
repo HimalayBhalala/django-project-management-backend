@@ -17,7 +17,7 @@ class User(AbstractUser):
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
-        db_table = "User"
+        db_table = "user"
 
     @staticmethod
     def get_username(email, first_name=None, last_name=None):
@@ -37,3 +37,8 @@ class Token(models.Model):
     refresh_token = models.CharField(max_length=100, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Token"
+        verbose_name_plural = "Tokens"
+        db_table = "token"

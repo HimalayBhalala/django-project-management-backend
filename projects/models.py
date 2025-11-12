@@ -12,8 +12,8 @@ STATUS_CHOICES = [
 class Project(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(null=True, blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.SET_DEFAULT, null=True)
-    members = models.ManyToManyField(User)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='project_created_by')
+    members = models.ManyToManyField(User, related_name='project_member')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

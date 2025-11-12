@@ -28,7 +28,7 @@ class UserSerializer(serializers.ModelSerializer):
         if not re.findall(r"[A-Z]", password):
             raise serializers.ValidationError({"password":"Atleat one Uppercase letter is required"})
         
-        if len(password) <= 8:
+        if len(password) < 8:
             raise serializers.ValidationError({"password":"Please make your password atleast 8 characte long"})
 
         data['first_name'] = first_name

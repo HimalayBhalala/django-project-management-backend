@@ -56,5 +56,16 @@ For example, install Django:
 -> For apply those migrations change in database so used below commnad,
     Command: python3 manage.py migrate
 
+# Project APIs
+1) accounts app folder: This folder include all of user related apis like register new user, login user, show user profile, update user profile.
 
+    base_path = "http://127.0.0.1:8000/apis/accounts/
+    1) Registration :
+        API(POST Request) => base_path/register/
+    2) Login: 
+        API(POST Request) => base_path/login/
+    3) Show Authenticated User Profile:
+        API(GET Request)  => base_path/me/
+    4) Modify Profile Detail
+        API(PATCH Request)=> base_path/me/
 

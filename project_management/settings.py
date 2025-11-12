@@ -41,9 +41,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'rest_framework_simplejwt'
+    'phonenumber_field' # Used for enter user phone number is correct or not
 ]
+
+DRF_APPS = [
+    'rest_framework', # Used for serializer, permission etc features
+    'rest_framework_simplejwt' # Used for include JWT token based authentication and also used to generate token
+]
+
+# Project Apps
+APPS = [
+    'accounts'
+]
+
+INSTALLED_APPS += DRF_APPS + APPS 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -104,6 +115,19 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = "accounts.User"
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES":[
+        "rest_framework_simplejwt.authentication.JWTAuthentication"
+    ]
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=2),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=3),
+    "ALGORITHM": os.environ.get('ALGORITHM')
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/

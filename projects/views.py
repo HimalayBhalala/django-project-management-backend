@@ -27,19 +27,29 @@ class ProjectViewSet(viewsets.ModelViewSet):
     
     # Set a default serializer for check validate data or not
     def get_serializer(self, *args, **kwargs):
-        return ProjectSerializer
+        return ProjectSerializer(*args, **kwargs)
     
-    @handle_exception()
-    @action(detail=False, methods=["get", "post"], url_name='get_or_create_project', url_path='/')
-    def get_or_create_project(self, request):
+    # Get all the project
+    def list(self, request):
+        all_projects = Project.objects.filter(created_by=request.user)
+        serializer = ProjectSerializer(all_projects, many=True)
+        return Response({
+            "status": "success",
+            "message": "All projects fetched successfully",
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
+
+    # Create a new Project
+    def create(self, request, *args, **kwargs):
         user = request.user
-        if request.method == "get":
-            all_project = self.get_queryset().filter(created_by=user)
-            serializers = ProjectSerializer(all_project, many=True)
-            return Response({
-                "status": "success",
-                "message": "All Project getting successfully",
-                "data": serializers.data
-            }, status=status.HTTP_200_OK)
-        
+        data = request.data
+        data['created_by'] = user.pk
+        serializers = self.get_serializer(data=request.data)
+        serializers.is_valid(raise_exception=True)
+        serializers.save()
+        return Response({
+            "status": "success",
+            "message": "Projects created successfully",
+            "data": serializers.data
+        }, status=status.HTTP_201_CREATED)
     

@@ -8,7 +8,8 @@ from .models import *
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = ["name", "description", "created_by", "status"]
+        fields = ["id", "name", "description", "created_by", "status"]
+        extra_kwargs = {"id": {"read_only":True}}
 
     def validate(self, data):
         name = data.get('name', '').strip()

@@ -15,11 +15,11 @@ class ProjectSerializer(serializers.ModelSerializer):
         extra_kwargs = {"id": {"read_only":True}}
 
     def validate(self, data):
+        user = self.context.get('user')
         name = data.get('name', '').strip()
         description = data.get('description', '').strip()
-        user_id = data.get('created_by')
 
-        project = Project.objects.filter(created_by=user_id, name=name).first()
+        project = Project.objects.filter(created_by=user.id, name=name).first()
 
         if project:
             raise serializers.ValidationError({"project": "Project already created"})
@@ -32,6 +32,8 @@ class ProjectSerializer(serializers.ModelSerializer):
             
         data['name'] = name
         data['description'] = description
+        data['created_by'] = user
+        
         return data
     
 

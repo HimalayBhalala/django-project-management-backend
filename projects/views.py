@@ -55,9 +55,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @handle_exception()
     def create(self, request, *args, **kwargs):
         user = request.user
-        data = request.data
-        data['created_by'] = user.pk
-        serializers = self.get_serializer(data=request.data)
+        serializers = self.get_serializer(data=request.data, context={'user':user})
         serializers.is_valid(raise_exception=True)
         project = serializers.save()
         project.members.add(user.pk)

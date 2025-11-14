@@ -33,8 +33,8 @@ class Task(models.Model):
 
     def __str__(self):
         if self.assigned_to:
-            return f"Task - {self.title} assigned to {self.assigned_to.username}"
-        return f"Task - {self.title}"
+            return f"Task - {self.title} assigned to {self.assigned_to.username} for a {self.project.name}"
+        return f"Task - {self.title} for a {self.project.name}"
 
 
 # Usefull for connected all member for communicate the project related task and also helping to make a robust Project Management System

@@ -24,7 +24,7 @@ class TaskSerializer(serializers.ModelSerializer):
         if project.status == 'archived':
             raise serializers.ValidationError({"status":"This project is a archived project so it is already builded so only show for your refrence"})
 
-        if Task.objects.filter(title=title).first():
+        if Task.objects.filter(title=title, project=project.id).first():
             raise serializers.ValidationError({'title': "This title already added"})
         
         return data

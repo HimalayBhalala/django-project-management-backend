@@ -1,8 +1,11 @@
 # DRF Module
 from rest_framework import serializers, status
 from rest_framework.response import Response
-from projects.models import Project
 from functools import wraps
+
+# Directory Module
+from projects.models import Project
+from tasks.models import Task
 
 
 # Custom Decorator used for check exception occure or not without affecting function logic
@@ -42,6 +45,26 @@ def check_project_exists():
                 }, status=status.HTTP_404_NOT_FOUND)
             # Set a project for retrieving from the views.py file
             kwargs['project'] = project            
+            return fun(*args, **kwargs)
+        return check
+    return decorator
+
+
+# Helpfull for fetch the task id from the router and also check it exists or not into our databases
+def check_task_exists():
+    def decorator(fun):
+        @wraps(fun)
+        def check(*args, **kwargs):
+            id = kwargs.get('pk')
+            task = Task.objects.filter(id=id).first()
+            if not task:
+                return Response({
+                    "status": "success",
+                    "message": "Task does not exists",
+                    "data" : []
+                }, status=status.HTTP_404_NOT_FOUND)
+            # Set a task for retrieving from the views.py file
+            kwargs['task'] = task            
             return fun(*args, **kwargs)
         return check
     return decorator

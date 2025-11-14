@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 # Directory Module
 from .models import Project
 from .serializers import *
-from project_management.utils import handle_exception, check_project_exists
+from project_management.utils import handle_exception, check_task_exists
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -65,3 +65,56 @@ class TaskViewSet(viewsets.ModelViewSet):
             "data": TaskSerializer(task).data
         }, status=status.HTTP_201_CREATED)
     
+
+    # Used for getting detail of task
+    @handle_exception()
+    @check_task_exists()
+    def retrieve(self, request, *args, **kwargs):
+        task = kwargs.get('task')
+        return Response({
+            "status": "success",
+            "message": "task retrieve successfully",
+            "data":TaskSerializer(task).data
+        }, status=status.HTTP_200_OK)
+
+
+    # Update the task information    
+    @handle_exception()
+    @check_task_exists()
+    def update(self, request, *args, **kwargs):
+        user = request.user
+        task = kwargs.get('task')
+        if request.method == "PUT":
+            serializers = self.get_serializer(task, data=request.data, context={'user': user})
+        else:
+            serializers = self.get_serializer(task, data=request.data, context={'user': user}, partial=True)
+
+        serializers.is_valid(raise_exception=True)
+        serializers.save()
+        return Response({
+            "status": "success",
+            "message": "Task modify successfully",
+            "data": serializers.data
+        }, status=status.HTTP_200_OK)
+        
+        
+    # Deleting task
+    @handle_exception()
+    @check_task_exists()
+    def destroy(self, request, *args, **kwargs):
+        user = request.user
+        task = kwargs.get('task')
+
+        if not task.project.members.filter(email=user.email).exists():
+            raise serializers.ValidationError({"user": "You have not a member of this project so not able to create or update a project related task"})
+        
+        if task.status == 'archived':
+            raise serializers.ValidationError({"status":"This project is a archived project so it is already builded so not able to delete this task"})
+
+        task.delete()
+
+        return Response({
+                "status": "success",
+                "message": "Task remove successfully",
+                "data" : []
+            }, status=status.HTTP_204_NO_CONTENT)

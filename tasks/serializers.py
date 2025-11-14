@@ -9,17 +9,18 @@ from .models import *
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ["title", "description", "project", "status", "due_date"]
+        fields = ["id", "title", "description", "project", "status", "due_date"]
+        extra_kwargs = {"id": {"read_only": True}}
 
     def validate(self, data):
         user = self.context.get('user')
-        project_obj = data.get('project')
-        title = data.get('title').strip()
+        project_obj = data.get('project') or self.instance.project
+        title = data.get('title', '').strip()
 
         project = Project.objects.filter(id=project_obj.id).first()
 
         if not project.members.filter(email=user.email).exists():
-            raise serializers.ValidationError({"user": "You have not a member of this project so not able to create a project related task"})
+            raise serializers.ValidationError({"user": "You have not a member of this project so not able to create or update a project related task"})
         
         if project.status == 'archived':
             raise serializers.ValidationError({"status":"This project is a archived project so it is already builded so only show for your refrence"})

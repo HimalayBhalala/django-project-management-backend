@@ -29,15 +29,6 @@ class ProjectSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({
                     "description": "Please include a atleast 20 words for description"
                 })
-<<<<<<< Updated upstream
-            
-        data['name'] = name
-        data['description'] = description
-        data['created_by'] = user
-        
-=======
-
->>>>>>> Stashed changes
         return data
     
 

@@ -27,20 +27,20 @@ def handle_exception():
     return decorator
 
 
+# Helpfull for fetch the project id from the router and also check it exists or not from our databases
 def check_project_exists():
     def decorator(fun):
         @wraps(fun)
         def check(*args, **kwargs):
             id = kwargs.get('pk')
             project = Project.objects.filter(id=id).first()
-
             if not project:
                 return Response({
                     "status": "success",
                     "message": "Requested project does not exists",
                     "data" : []
                 }, status=status.HTTP_404_NOT_FOUND)
-
+            # Set a project for retrieving from the views.py file
             kwargs['project'] = project            
             return fun(*args, **kwargs)
         return check

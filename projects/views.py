@@ -32,13 +32,24 @@ class ProjectViewSet(viewsets.ModelViewSet):
     # Get all the project
     @handle_exception()
     def list(self, request):
-        all_projects = Project.objects.filter(created_by=request.user)
-        serializer = ProjectSerializer(all_projects, many=True)
-        return Response({
-            "status": "success",
-            "message": "All projects fetched successfully",
-            "data": serializer.data
-        }, status=status.HTTP_200_OK)
+        try:
+            all_projects = Project.objects.all()
+            page = self.paginate_queryset(all_projects)
+            serializer = ProjectSerializer(page, many=True)
+            return Response({
+                "status": "success",
+                "message": "Projects fetched successfully",
+                "next": self.paginator.get_next_link(),
+                "previous": self.paginator.get_previous_link(),
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+        except Exception:
+            return Response({
+                "status": "success",
+                "message": "No data found",
+                "data": []
+            }, status=status.HTTP_400_BAD_REQUEST)
+
 
     # Create a new Project
     @handle_exception()
@@ -48,7 +59,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         data['created_by'] = user.pk
         serializers = self.get_serializer(data=request.data)
         serializers.is_valid(raise_exception=True)
-        serializers.save()
+        project = serializers.save()
+        project.members.add(user.pk)
         return Response({
             "status": "success",
             "message": "Projects created successfully",
@@ -59,18 +71,34 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @handle_exception()
     @check_project_exists()
     def retrieve(self, request, *args, **kwargs):
+        user = request.user
         project = kwargs.get('project')
+
+        if project.created_by != user and project.status == 'archived':
+            return Response({
+                "status": "error",
+                "message": "You do not able to show this project bacause it is archived project so only created user able to show it."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
         return Response({
             "status": "success",
             "message": "Project retrieve successfully",
-            "data": self.get_serializer(project).data
+            "data":GetDetailProjectSerilaizer(project).data
         })
-    
+
+    # Update the project information    
     @handle_exception()
     @check_project_exists()
     def update(self, request, *args, **kwargs):
+        user = request.user
         project = kwargs.get('project')
         
+        if project.created_by != user:
+            return Response({
+                "status": "error",
+                "message": "You do not permission to update this project"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
         if request.method == "PUT":
             serializers = self.get_serializer(project, data=request.data)
         else:
@@ -84,11 +112,19 @@ class ProjectViewSet(viewsets.ModelViewSet):
             "data": serializers.data
         }, status=status.HTTP_200_OK)
         
+    # Delete the project
     @handle_exception()
     @check_project_exists()
     def destroy(self, request, *args, **kwargs):
+        user = request.user
         project = kwargs.get('project')
 
+        if project.created_by != user:
+            return Response({
+                "status": "error",
+                "message": "You do not permission to delete this project"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
         project.delete()
 
         return Response({
@@ -97,10 +133,42 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 "data" : []
             }, status=status.HTTP_204_NO_CONTENT)
     
+    # Assign member to a project
     @handle_exception()
     @check_project_exists()
     @action(detail=True, methods=["post"], url_name='add-member', url_path='add-member')
     def assign_member(self, request, *args, **kwargs):
         project = kwargs.get('project')
-        pass
-
+        serializers = AssignMemberToProjectSerializer(data=request.data, context={'user':request.user, 'project':project})
+        serializers.is_valid(raise_exception=True)
+        return Response({
+                "status": "success",
+                "message": f"Assign member successfully for {project.name}",
+                "data" : GetDetailProjectSerilaizer(project).data
+            }, status=status.HTTP_200_OK)
+    
+    # Modify project status and mark as completed
+    @handle_exception()
+    @check_project_exists()
+    @action(detail=True, methods=["post"], url_name='completed-project', url_path='complete')
+    def mark_as_completed(self, request, *args, **kwargs):
+        user = request.user
+        project = kwargs.get('project')
+        if project.created_by != user:
+            return Response({
+                "status": "error",
+                "message": "You do not have permission to mark a project as complete"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        if project.status == 'completed':
+            return Response({
+                "status": "success",
+                "message": "Project already completed"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        project.status = 'completed'
+        project.save(update_fields=['status'])
+        return Response({
+                "status": "success",
+                "message": "Project completed successfully",
+                "data": GetDetailProjectSerilaizer(project).data
+            }, status=status.HTTP_200_OK)

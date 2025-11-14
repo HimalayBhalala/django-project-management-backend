@@ -3,9 +3,12 @@ from rest_framework import serializers
 
 # Directory Module
 from .models import *
+from accounts.serializers import UserInforSerializer
 
 
+# Helpfull for validate requested data while creating new project
 class ProjectSerializer(serializers.ModelSerializer):
+    created_by = UserInforSerializer(read_only=True)
     class Meta:
         model = Project
         fields = ["id", "name", "description", "created_by", "status"]
@@ -14,6 +17,12 @@ class ProjectSerializer(serializers.ModelSerializer):
     def validate(self, data):
         name = data.get('name', '').strip()
         description = data.get('description', '').strip()
+        user_id = data.get('created_by')
+
+        project = Project.objects.filter(created_by=user_id, name=name).first()
+
+        if project:
+            raise serializers.ValidationError({"project": "Project already created"})
         
         if description: 
             if len(description) < 20:
@@ -25,3 +34,35 @@ class ProjectSerializer(serializers.ModelSerializer):
         data['description'] = description
         return data
     
+
+# Helpfull for include member inside the Project
+class AssignMemberToProjectSerializer(serializers.Serializer):
+    # Include a many user from the User table
+    members = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True)
+
+    def validate(self, data):
+        members = data.get('members', [])
+        user = self.context.get('user')
+        project = self.context.get('project')
+        if not members:
+            raise serializers.ValidationError({'members':"Please Provide atleast one member for Project"})
+        
+        for member in members:
+            if user.id == member.id and user.id == project.created_by.id:
+                raise serializers.ValidationError({'members':"You have already member of this project because you have created project"})
+            
+            if project.members.filter(id=member.id).exists():
+                raise serializers.ValidationError({"members": f"Member - {member.id} already exists"})
+            project.members.add(member.id)
+
+        project.save()
+        return data
+    
+
+# Helpfull for getting the project detail and members information
+class GetDetailProjectSerilaizer(serializers.ModelSerializer):
+    members = UserInforSerializer(read_only=True, many=True)
+    created_by = serializers.CharField(source='created_by.username', read_only=True)
+    class Meta:
+        model = Project
+        fields = ["name", "description", "created_by", "members", "status"]

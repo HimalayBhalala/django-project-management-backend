@@ -3,12 +3,14 @@ from accounts.models import User
 
 # Create your models here.
 
+# Choices for modify project status
 STATUS_CHOICES = [
     ('active','Active'),
     ('completed', 'Completed'),
     ('archived', 'Archived')
 ]
 
+# Main model for a Project Management System
 class Project(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(null=True, blank=True)
@@ -24,6 +26,6 @@ class Project(models.Model):
         db_table = "project"
 
     def __str__(self):
-        if self.created_at:
-            return f"Project - {self.name} created by {self.created_at.username}"
+        if self.created_by:
+            return f"Project - {self.name} created by {self.created_by.username}"
         return f"Project - {self.name}"

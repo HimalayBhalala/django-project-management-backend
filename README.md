@@ -49,6 +49,11 @@ For example, install Django:
     Command: pip list
 
 -> If everything is right based on above instruction so include .env file from the root folder.
+    =>  - accounts
+        - project_management
+        - projects
+        - virtual_env_name
+        - .env
 
 -> Use below command for migrations first (here migration is used to keep creating and updating model information),
     Command: python3 manage.py makemigrations
@@ -56,16 +61,44 @@ For example, install Django:
 -> For apply those migrations change in database so used below commnad,
     Command: python3 manage.py migrate
 
+-> If above command run successfully after that run the django server using,
+    Command: python3 manage.py runserver
+
+    -> Project start successfully so getting below message like,
+        Django version 5.2.8, using settings 'project_management.settings'
+        Starting development server at http://127.0.0.1:8000/
+
+-> Server is started so open a postman and import a api collection and envionment collection first and use below api
+
 # Project APIs
 1) accounts app folder: This folder include all of user related apis like register new user, login user, show user profile, update user profile.
 
     base_path = "http://127.0.0.1:8000/apis/accounts/
     1) Registration :
-        API(POST Request) => base_path/register/
+        API(POST Method) => base_path/register/
     2) Login: 
-        API(POST Request) => base_path/login/
-    3) Show Authenticated User Profile:
-        API(GET Request)  => base_path/me/
-    4) Modify Profile Detail
-        API(PATCH Request)=> base_path/me/
+        API(POST Method) => base_path/login/
+    3) Get User Profile:
+        API(GET Method)  => base_path/me/
+    4) Update User Profile:
+        API(PATCH Method)=> base_path/me/
 
+2) projects app folder: Helpfull for getting all list of project, creating a new project, getting a project detail, update it's fully detail or partial detail, delete the project if not needed, able to assign new member inside the project and also able to mark as a completed project.
+
+    base_path = "http://127.0.0.1:8000/apis/projects/
+    1) Get List Of Projects:
+        API(GET Method)   => base_path
+    2) Create Project:
+        API(POST Method)  => base_path
+    3) Get Project Detail:
+        API(GET Method)   => base_path/<project_id>/
+    4) Update Project:
+        API(PUT Method)   => base_path/<project_id>/
+    5) Partially Update Project:
+        API(PATCH Method) => base_path/<project_id>/
+    6) Delete Project:
+        API(DELETE Method)=> base_path/<project_id>/
+    7) Assigned Member:
+        API(POST Method)  => base_path/<project_id>/add-member/
+    8) Mark Project Completed:
+        API(POST Method)  => base_path/<project_id>/complete/

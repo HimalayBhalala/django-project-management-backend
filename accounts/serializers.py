@@ -100,8 +100,8 @@ class TokenSerializer(serializers.ModelSerializer):
         fields = ["access_token", "refresh_token"]
 
 
-# Getting the user detail shortly
+# Gettign the user details shortly
 class UserInforSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email']
+        fields = ["username", "email"]

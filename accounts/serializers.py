@@ -98,3 +98,10 @@ class TokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Token
         fields = ["access_token", "refresh_token"]
+
+
+# Getting the user detail shortly
+class UserInforSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email']

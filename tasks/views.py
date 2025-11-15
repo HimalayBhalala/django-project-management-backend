@@ -74,7 +74,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         return Response({
             "status": "success",
             "message": "task retrieve successfully",
-            "data":TaskSerializer(task).data
+            "data":DetailTaskSerializer(task).data
         }, status=status.HTTP_200_OK)
 
 
@@ -106,10 +106,16 @@ class TaskViewSet(viewsets.ModelViewSet):
         task = kwargs.get('task')
 
         if not task.project.members.filter(email=user.email).exists():
-            raise serializers.ValidationError({"user": "You have not a member of this project so not able to create or update a project related task"})
+            return Response({
+                "status":"error",
+                "message": "You have not a member of this project so not able to cdelete a project related task"
+            }, status=status.HTTP_400_BAD_REQUEST)
         
         if task.status == 'archived':
-            raise serializers.ValidationError({"status":"This project is a archived project so it is already builded so not able to delete this task"})
+            return Response({
+                "status":"error",
+                "message":"This project is a archived project so it is already builded so not able to delete this task"
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         task.delete()
 
@@ -118,3 +124,61 @@ class TaskViewSet(viewsets.ModelViewSet):
                 "message": "Task remove successfully",
                 "data" : []
             }, status=status.HTTP_204_NO_CONTENT)
+
+    
+    # Assign task to user
+    @handle_exception()
+    @check_task_exists()
+    @action(detail=True, methods=['post'], url_name='assign_user', url_path='assign')
+    def task_assign_to_user(self, request, *args, **kwargs):
+        user = request.user
+        task = kwargs.get('task')
+        serializers = TaskAssignSerializer(data=request.data, context={'user':user, "task":task})
+        serializers.is_valid(raise_exception=True)
+        return Response({
+            "status": "success",
+            "message": "Task assigned successfully",
+            "data": DetailTaskSerializer(task).data
+        }, status=status.HTTP_200_OK)
+    
+
+    # Mark as a Completed Task
+    @handle_exception()
+    @check_task_exists()
+    @action(detail=True, methods=['post'], url_name='mark-as-complete', url_path='complete')
+    def mark_as_completed(self, request, *args, **kwargs):
+        user = request.user
+        task = kwargs.get('task')
+
+        project = Project.objects.filter(id=task.project.id).first()
+
+        if not project.members.filter(email=user.email).exists():
+            return Response({
+                "status":"error",
+                "message": "Requested user is not a member of an project so not able to mark as a completed task"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        if project.status == 'archived':
+            return Response({
+                "status":"error",
+                "message":"This project is a archived project so it is already builded so only show for your reference"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if task.status == 'completed':
+            return Response({
+                "status":"error",
+                "message": "Task already completed"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        task.status = 'completed'
+        if not task.assigned_to:
+            task.assigned_to = user
+            task.save(update_fields=['status', 'assigned_to'])
+        else:
+            task.save(update_fields=['status'])
+
+        return Response({
+            "status": "success",
+            "message": "Task completed successfully",
+            "data": DetailTaskSerializer(task).data
+        }, status=status.HTTP_200_OK)

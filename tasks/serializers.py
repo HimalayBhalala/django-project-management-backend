@@ -6,6 +6,7 @@ from rest_framework import serializers
 
 # Directory Module
 from .models import *
+from projects.serializers import ProjectSerializer
 
 
 # Helpfull for validate task related data
@@ -71,10 +72,27 @@ class DetailTaskSerializer(serializers.ModelSerializer):
         fields = ["id", "title", "description", "project", "assigned_to", "status", "due_date"]
         extra_kwargs={"assigned_to": {"read_only": True}}
 
-# Helpfull for validate task related communication between project member
+
+# Show only comment information
+class CommentInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ["id", "author", "text", "created_at"]
+
+
+# Helpfull for show all detail of comment
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.CharField(source='author.username', read_only=True)
     class Meta:
         model = Comment
         fields = ["id", "task", "author", "text", "created_at"]
-        extra_kwargs = {"id": {"read_only": True}}
+
+
+# Helpfull for gettign all comments data like, task, assigned_to and task status
+class TaskCommentSerilaizer(serializers.ModelSerializer):
+    project = serializers.IntegerField(source='task.project.id', read_only=True)
+    assigned_to = serializers.IntegerField(source='task.assigned_to', read_only=True)
+    status = serializers.CharField(source="task.status", read_only=True)
+    class Meta:
+        model = Comment
+        fields = ["id", "project", "task", "assigned_to", "status", "text", "author", "created_at"]
+

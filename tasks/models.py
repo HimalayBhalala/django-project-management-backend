@@ -39,7 +39,7 @@ class Task(models.Model):
 
 # Usefull for connected all member for communicate the project related task and also helping to make a robust Project Management System
 class Comment(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.SET_NULL, null=True)
+    task = models.ForeignKey(Task, on_delete=models.SET_NULL, null=True, related_name='comments')
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

@@ -1,5 +1,6 @@
 # Django Module
 from django.shortcuts import render
+from django_filters.rest_framework import DjangoFilterBackend                                   
 
 # DRF Module
 from rest_framework import viewsets, status
@@ -10,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 # Directory Module
 from .models import Project
 from .serializers import *
+from .utils import CommentFilter
 from project_management.utils import handle_exception, check_task_exists
 
 
@@ -198,7 +200,7 @@ class TaskViewSet(viewsets.ModelViewSet):
             return Response({
                 "status": "success",
                 "message": "Comment retrieve successfully",
-                "data": CommentSerializer(comments, many=True).data
+                "data": CommentInfoSerializer(comments, many=True).data
             }, status=status.HTTP_200_OK)
 
         data['task'] = task.id
@@ -210,3 +212,22 @@ class TaskViewSet(viewsets.ModelViewSet):
             "message": "Comment added successfully",
             "data": serializers.data
         }, status=status.HTTP_201_CREATED)
+
+
+# Helpfull for getting all the comment and also able to filter it
+class CommentViewSet(viewsets.ModelViewSet):
+    
+    # Only authenticated user can able to show comments
+    permission_classes = [IsAuthenticated]
+    
+    # Perform operation on Comment Model
+    queryset = Comment.objects.all()
+
+    # Serializer for getting field based information
+    serializer_class = TaskCommentSerilaizer
+
+    # Django Built in Filter
+    filter_backends = [DjangoFilterBackend]
+
+    # Include fields set based filtering
+    filterset_class = CommentFilter

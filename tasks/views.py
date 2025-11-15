@@ -182,3 +182,31 @@ class TaskViewSet(viewsets.ModelViewSet):
             "message": "Task completed successfully",
             "data": DetailTaskSerializer(task).data
         }, status=status.HTTP_200_OK)
+
+
+    # All Project Management Users are able to create a comment based on tasks so it is helping us to develop the project based on their idea's and conversation
+    @handle_exception()
+    @check_task_exists()
+    @action(detail=True, methods=['get', 'post'], url_name='get-or-create-comment', url_path='comments')
+    def get_or_create_comment(self, request, *args, **kwargs):
+        user = request.user
+        task = kwargs.get('task')
+        data = request.data
+
+        if request.method == "GET":
+            comments = Comment.objects.filter(task=task)
+            return Response({
+                "status": "success",
+                "message": "Comment retrieve successfully",
+                "data": CommentSerializer(comments, many=True).data
+            }, status=status.HTTP_200_OK)
+
+        data['task'] = task.id
+        serializers = CommentSerializer(data=request.data)
+        serializers.is_valid(raise_exception=True)
+        serializers.save(author=user)
+        return Response({
+            "status": "success",
+            "message": "Comment added successfully",
+            "data": serializers.data
+        }, status=status.HTTP_201_CREATED)

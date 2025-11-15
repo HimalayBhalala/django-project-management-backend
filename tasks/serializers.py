@@ -76,4 +76,5 @@ class CommentSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source='author.username', read_only=True)
     class Meta:
         model = Comment
-        fields = ["task", "author", "text", "created_by"]
+        fields = ["id", "task", "author", "text", "created_at"]
+        extra_kwargs = {"id": {"read_only": True}}

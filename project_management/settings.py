@@ -52,7 +52,8 @@ DRF_APPS = [
 # Project Apps
 APPS = [
     'accounts',
-    'projects'
+    'projects',
+    'tasks'
 ]
 
 INSTALLED_APPS += DRF_APPS + APPS 

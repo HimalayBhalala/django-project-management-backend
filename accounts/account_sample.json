@@ -1,0 +1,74 @@
+[
+    {
+        "first_name": "",
+        "last_name": "",
+        "username": "himalay",
+        "email": "himalay@gmail.com",
+        "phone": "+91234444455",
+        "dob": null,
+        "tokens": {
+            "access_token": null,
+            "refresh_token": null
+        }
+    },
+    {
+        "first_name": "Himalay",
+        "last_name": "BHB",
+        "username": "Himalay BHB",
+        "email": "himalay1@gmail.com",
+        "phone": "+9193282144",
+        "dob": "2002-06-11",
+        "tokens": {
+            "access_token": null,
+            "refresh_token": null
+        }
+    },
+    {
+        "first_name": "",
+        "last_name": "",
+        "username": "abc",
+        "email": "abc@gmail.com",
+        "phone": "",
+        "dob": null,
+        "tokens": {
+            "access_token": null,
+            "refresh_token": null
+        }
+    },
+    {
+        "first_name": "",
+        "last_name": "",
+        "username": "ravi",
+        "email": "ravi@gmail.com",
+        "phone": "",
+        "dob": null,
+        "tokens": {
+            "access_token": null,
+            "refresh_token": null
+        }
+    },
+    {
+        "first_name": "",
+        "last_name": "",
+        "username": "mukesh",
+        "email": "mukesh@gmail.com",
+        "phone": "",
+        "dob": null,
+        "tokens": {
+            "access_token": null,
+            "refresh_token": null
+        }
+    },
+    {
+        "first_name": "",
+        "last_name": "",
+        "username": "admin",
+        "email": "admin@gmail.com",
+        "phone": null,
+        "dob": null,
+        "tokens": {
+            "access_token": null,
+            "refresh_token": null
+        }
+    }
+]

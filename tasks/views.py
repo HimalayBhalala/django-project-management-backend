@@ -38,7 +38,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         try:
             tasks = Task.objects.all()
             page = self.paginate_queryset(tasks)
-            serializer = TaskSerializer(page, many=True)
+            serializer = TaskDetailSerializer(page, many=True)
             return Response({
                 "status": "success",
                 "message": "Tasks getting successfully",

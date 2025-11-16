@@ -65,11 +65,11 @@ class TaskAssignSerializer(serializers.ModelSerializer):
         return data
     
 
-# Get all Task related information
-class DetailTaskSerializer(serializers.ModelSerializer):
+# Helpfull for getting all detail of task
+class TaskDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ["id", "title", "description", "project", "assigned_to", "status", "due_date"]
+        fields = ["id", "title", "description", "project", "assigned_to", "status", "due_date", "created_at"]
         extra_kwargs={"assigned_to": {"read_only": True}}
 
 
@@ -80,19 +80,26 @@ class CommentInfoSerializer(serializers.ModelSerializer):
         fields = ["id", "author", "text", "created_at"]
 
 
+# Get all Task related information
+class DetailTaskSerializer(serializers.ModelSerializer):
+    comments = CommentInfoSerializer(many=True, read_only=True)
+    class Meta:
+        model = Task
+        fields = ["id", "title", "description", "project", "assigned_to", "status", "due_date", "created_at", "comments"]
+        extra_kwargs={"assigned_to": {"read_only": True}}
+
+
+# Helpfull for gettign all comments data like, task, assigned_to and task status
+class TaskCommentSerilaizer(serializers.ModelSerializer):
+    task = TaskDetailSerializer(read_only=True)
+    project = serializers.IntegerField(source='task.project.id', read_only=True)
+    class Meta:
+        model = Comment
+        fields = ["id", "project", "task", "text", "author", "created_at"]
+
+
 # Helpfull for show all detail of comment
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ["id", "task", "author", "text", "created_at"]
-
-
-# Helpfull for gettign all comments data like, task, assigned_to and task status
-class TaskCommentSerilaizer(serializers.ModelSerializer):
-    project = serializers.IntegerField(source='task.project.id', read_only=True)
-    assigned_to = serializers.IntegerField(source='task.assigned_to', read_only=True)
-    status = serializers.CharField(source="task.status", read_only=True)
-    class Meta:
-        model = Comment
-        fields = ["id", "project", "task", "assigned_to", "status", "text", "author", "created_at"]
-

@@ -98,3 +98,20 @@ class TokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Token
         fields = ["access_token", "refresh_token"]
+
+
+# Gettign the user details shortly
+class UserInforSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["username", "email"]
+
+
+
+# Helpfull for getting the all user profile and also gettig the access_token and refresh_token
+class SampleUserSerializer(serializers.ModelSerializer):
+    tokens = TokenSerializer(read_only=True)
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "username", "email", "password", "phone", "dob", "tokens"]
+        extra_kwargs = {"password": {"write_only":True}}

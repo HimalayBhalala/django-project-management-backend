@@ -32,7 +32,7 @@ class User(AbstractUser):
 
 # Keep Track of User login records and also help us for future while blocked the user
 class Token(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tokens')
     access_token = models.CharField(max_length=100, null=True, blank=True)
     refresh_token = models.CharField(max_length=100, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

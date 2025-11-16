@@ -114,4 +114,3 @@ class SampleUserSerializer(serializers.ModelSerializer):
         model = User
         fields = ["first_name", "last_name", "username", "email", "password", "phone", "dob", "tokens"]
         extra_kwargs = {"password": {"write_only":True}}
-

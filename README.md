@@ -76,29 +76,461 @@ For example, install Django:
     base_path = "http://127.0.0.1:8000/apis/accounts/
     1) Registration :
         API(POST Method) => base_path/register/
+
+        Input: {
+                    "email": "rajesh@gmail.com",
+                    "password": "Rajesh@12345"
+               }
+
+        Output: {
+                    "status": "success",
+                    "message": "Registration success",
+                    "data": {
+                        "first_name": "",
+                        "last_name": "",
+                        "username": "rajesh",
+                        "email": "rajesh@gmail.com",
+                        "phone": "",
+                        "dob": null
+                    }
+                }
     2) Login: 
         API(POST Method) => base_path/login/
+
+        Input : {
+                    "email": "rajesh@gmail.com",
+                    "password": "Rajesh@12345"
+                }
+
+        Output : {
+                    "status": "success",
+                    "message": "Login success",
+                    "data": {
+                        "user": {
+                            "first_name": "",
+                            "last_name": "",
+                            "username": "rajesh",
+                            "email": "rajesh@gmail.com",
+                            "phone": "",
+                            "dob": null
+                        },
+                        "token": {
+                            "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhIjgifQ.mqDBErxOCRjQRLdvX1RSQDvzMdz6dxG6EwPcMG0-SOY",
+                            "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlI-7G9PM6itsM8c3UX1fME"
+                        }
+                    }
+                }
+
+        NOTE: Copy access_token and past it inside the postman environment
+
     3) Get User Profile:
         API(GET Method)  => base_path/me/
+                    
+        Output : {
+                    "status": "success",
+                    "message": "Profile getting successfully",
+                    "data": {
+                        "first_name": "",
+                        "last_name": "",
+                        "username": "rajesh",
+                        "email": "rajesh@gmail.com",
+                        "phone": "",
+                        "dob": null
+                    }
+                }
     4) Update User Profile:
         API(PATCH Method)=> base_path/me/
+
+        Input : {
+                    "first_name" : "Rajesh",
+                    "last_name" : "Pathak"
+                }
+
+        Output : {
+                    "status": "success",
+                    "message": "Profile updated successfully",
+                    "data": {
+                        "first_name": "Rajesh",
+                        "last_name": "Pathak",
+                        "username": "Rajesh Pathak",
+                        "email": "rajesh@gmail.com",
+                        "phone": "",
+                        "dob": null
+                    }
+                }
+
 
 2) projects app folder: Helpfull for getting all list of project, creating a new project, getting a project detail, update it's fully detail or partial detail, delete the project if not needed, able to assign new member inside the project and also able to mark as a completed project.
 
     base_path = "http://127.0.0.1:8000/apis/projects/
     1) Get List Of Projects:
         API(GET Method)   => base_path
+
+        Output : {
+                    "status": "success",
+                    "message": "Projects fetched successfully",
+                    "next": null,
+                    "previous": null,
+                    "data": [
+                        {
+                            "id": 17,
+                            "name": "MakeMyTrip",
+                            "description": "",
+                            "created_by": {
+                                "username": "Rajesh Pathak",
+                                "email": "rajesh@gmail.com"
+                            },
+                            "status": "active"
+                        }
+                    ]
+                }
     2) Create Project:
         API(POST Method)  => base_path
+
+        Input : {
+                    "name": "Youtube"
+                }
+
+        Output: {
+                    "status": "success",
+                    "message": "Projects created successfully",
+                    "data": {
+                        "id": 18,
+                        "name": "YouTube",
+                        "description": "",
+                        "created_by": {
+                            "username": "Rajesh Pathak",
+                            "email": "rajesh@gmail.com"
+                        },
+                        "status": "active"
+                    }
+                }
+
     3) Get Project Detail:
         API(GET Method)   => base_path/<project_id>/
+
+        Output : {
+                    "status": "success",
+                    "message": "Project retrieve successfully",
+                    "data": {
+                        "id": 15,
+                        "name": "Youtube",
+                        "description": "",
+                        "members": [
+                            {
+                                "username": "Rajesh Pathak",
+                                "email": "rajesh@gmail.com"
+                            }
+                        ],
+                        "status": "active",
+                        "created_at": "2025-11-16T09:16:37.796961Z"
+                    }
+                }
     4) Update Project:
         API(PUT Method)   => base_path/<project_id>/
+
+        Input : {
+                    "name": "Rail MakemyTripe",
+                    "description": "This project is help us getting all train related information",
+                    "status": "completed"
+                }
+
+        Output: {
+                    "status": "success",
+                    "message": "Project updated successfully",
+                    "data": {
+                        "id": 17,
+                        "name": "Rail MakemyTripe",
+                        "description": "This project is help us getting all train related information",
+                        "created_by": {
+                            "username": "Rajesh Pathak",
+                            "email": "rajesh@gmail.com"
+                        },
+                        "status": "completed"
+                    }
+                }
     5) Partially Update Project:
         API(PATCH Method) => base_path/<project_id>/
+
+        Input : {
+                    "status":"archived"
+                }
+
+        Output: {
+                    "status": "success",
+                    "message": "Project updated successfully",
+                    "data": {
+                        "id": 17,
+                        "name": "Rail MakemyTripe",
+                        "description": "This project is help us getting all train related information",
+                        "created_by": {
+                            "username": "Rajesh Pathak",
+                            "email": "rajesh@gmail.com"
+                        },
+                        "status": "archived"
+                    }
+                }
     6) Delete Project:
         API(DELETE Method)=> base_path/<project_id>/
+
+        Output: {
+                    "status": "success",
+                    "message": "Project remove successfully",
+                    "data": []
+                }
     7) Assigned Member:
         API(POST Method)  => base_path/<project_id>/add-member/
+
+        Input: {
+                    "members": [7]
+                }
+
+        Output: {
+                    "status": "success",
+                    "message": "Assign member successfully for Rail MakemyTripe",
+                    "data": {
+                        "id": 17,
+                        "name": "Rail MakemyTripe",
+                        "description": "This project is help us getting all train related information",
+                        "created_by": "Rajesh Pathak",
+                        "members": [
+                            {
+                                "username": "admin",
+                                "email": "admin@gmail.com"
+                            },
+                            {
+                                "username": "Rajesh Pathak",
+                                "email": "rajesh@gmail.com"
+                            }
+                        ],
+                        "status": "archived",
+                        "created_at": "2025-11-16T09:25:48.776967Z"
+                    }
+                }
     8) Mark Project Completed:
         API(POST Method)  => base_path/<project_id>/complete/
+
+        Output: {
+                    "status": "success",
+                    "message": "Project completed successfully",
+                    "data": {
+                        "id": 17,
+                        "name": "Rail MakemyTripe",
+                        "description": "This project is help us getting all train related information",
+                        "created_by": "Rajesh Pathak",
+                        "members": [
+                            {
+                                "username": "admin",
+                                "email": "admin@gmail.com"
+                            },
+                            {
+                                "username": "Rajesh Pathak",
+                                "email": "rajesh@gmail.com"
+                            }
+                        ],
+                        "status": "completed",
+                        "created_at": "2025-11-16T09:25:48.776967Z"
+                    }
+                }
+
+
+3) tasks app folder: Helpfull for getting the project related all the tasks, create a new task for a project, get a detail of an task, fully updated the task information, partial update the task, delete a task, gettign all task releted comments, create a new comment based on task and also filter the comments data functionality
+    
+    base_path = "http://127.0.0.1:8000/apis/tasks/
+
+    1) Get List Of Tasks:
+        API(GET Method)    => base_path or base_path/?page=<page_number> (using pagination)
+
+        Output: {
+                    "status": "success",
+                    "message": "Tasks getting successfully",
+                    "next": null,
+                    "previous": null,
+                    "data": []
+                }
+    2) Create Task:
+        API(POST Method)   => base_path
+
+        Input: {
+                    "title": "Backend",
+                    "description": "Completed Backend authenticationa and authorization the pages for Project Management System",
+                    "project": "17"
+                }
+
+        Output: {
+                    "status": "success",
+                    "message": "Task created successfully",
+                    "data": {
+                        "id": 14,
+                        "title": "Backend",
+                        "description": "Completed Backend authenticationa and authorization the pages for Project Management System",
+                        "project": 17,
+                        "status": "pending",
+                        "due_date": null
+                    }
+                }
+    3) Get Task  Detail:
+        API(GET Method)    => base_path/<task_id>/
+
+        Output: {
+                    "status": "success",
+                    "message": "task retrieve successfully",
+                    "data": {
+                        "id": 14,
+                        "title": "Backend",
+                        "description": "Completed Backend authenticationa and authorization the pages for Project Management System",
+                        "project": 17,
+                        "assigned_to": null,
+                        "status": "pending",
+                        "due_date": null,
+                        "created_at": "2025-11-16T09:58:58.008141Z",
+                        "comments": []
+                    }
+                }
+    4) Update Task:
+        API(PUT Method)    => base_path/<task_id>/
+
+        Input: {
+                    "title": "UI/UX",
+                    "description": "Completed design section",
+                    "project": "17",
+                    "due_date": "2025-11-15"
+                }
+
+        Output: {
+                    "status": "success",
+                    "message": "Task modify successfully",
+                    "data": {
+                        "id": 14,
+                        "title": "UI/UX",
+                        "description": "Completed design section",
+                        "project": 17,
+                        "status": "pending",
+                        "due_date": "2025-11-15"
+                    }
+                }
+    5) Partially Update Task:
+        API(PATCH Method)  => base_path/<task_id>/
+
+        Input: {
+                    "status":"in_progress"
+                }
+
+        Output: {
+                    "status": "success",
+                    "message": "Task modify successfully",
+                    "data": {
+                        "id": 14,
+                        "title": "UI/UX",
+                        "description": "Completed design section",
+                        "project": 17,
+                        "status": "in_progress",
+                        "due_date": "2025-11-15"
+                    }
+                }
+    6) Delete Task:
+        API(DELETE Method) => base_path/<task_id>/
+
+        Output: {
+                    "status": "success",
+                    "message": "Task remove successfully",
+                    "data": []
+                }
+    7) Assign Task:
+        API(POST Method)   => base_path/<task_id>/assign/
+
+        Input : {
+                    "assigned_to": 7
+                }
+
+        Output : {
+                    "status": "success",
+                    "message": "Task assigned successfully",
+                    "data": {
+                        "id": 14,
+                        "title": "UI/UX",
+                        "description": "Completed design section",
+                        "project": 17,
+                        "assigned_to": 7,
+                        "status": "in_progress",
+                        "due_date": "2025-11-15",
+                        "created_at": "2025-11-16T09:58:58.008141Z",
+                        "comments": []
+                    }
+                }
+    8) Mark as a Complete:
+        API(POST Method)   => base_path/<task_id>/complete/
+
+        Output: {
+                    "status": "success",
+                    "message": "Task completed successfully",
+                    "data": {
+                        "id": 14,
+                        "title": "UI/UX",
+                        "description": "Completed design section",
+                        "project": 17,
+                        "assigned_to": 7,
+                        "status": "completed",
+                        "due_date": "2025-11-15",
+                        "created_at": "2025-11-16T09:58:58.008141Z",
+                        "comments": []
+                    }
+                }
+    9) Get All Task Related Comment:
+        API(GET Method)    => base_path/<task_id>/comments/
+
+        Output: {
+                    "status": "success",
+                    "message": "Comment retrieve successfully",
+                    "data": []
+                }
+    10) Include a New Comment:
+        API(POST Method)   => base_path/<task_id>/comments/
+
+        Input: {
+                    "text": "Please completed design section as soon as possible"
+                }
+
+        Output: {
+                    "status": "success",
+                    "message": "Comment added successfully",
+                    "data": {
+                        "id": 1,
+                        "task": 14,
+                        "author": 8,
+                        "text": "Please completed design section as soon as possible",
+                        "created_at": "2025-11-16T10:08:54.623608Z"
+                    }
+                }
+
+    For Gettig All Comments:
+
+        base_path = "http://127.0.0.1:8000/apis/comments/
+
+        1) Get List Of Comments:
+           API(GET Method) => base_path
+
+           Output: {
+                        "count": 1,
+                        "next": null,
+                        "previous": null,
+                        "results": [
+                            {
+                                "id": 1,
+                                "project": 17,
+                                "task": {
+                                    "id": 14,
+                                    "title": "UI/UX",
+                                    "description": "Completed design section",
+                                    "project": 17,
+                                    "assigned_to": 7,
+                                    "status": "completed",
+                                    "due_date": "2025-11-15",
+                                    "created_at": "2025-11-16T09:58:58.008141Z"
+                                },
+                                "text": "Please completed design section as soon as possible",
+                                "author": 8,
+                                "created_at": "2025-11-16T10:08:54.623608Z"
+                            }
+                        ]
+                    }

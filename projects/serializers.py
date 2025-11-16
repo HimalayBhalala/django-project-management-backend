@@ -29,9 +29,28 @@ class ProjectSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({
                     "description": "Please include a atleast 20 words for description"
                 })
+            
+        data['name'] = name
+        data['description'] = description
+        data['created_by'] = user
         return data
     
 
+# Helpfull for partially update a project information
+class PartialUpdateProjectSerializer(serializers.ModelSerializer):
+    created_by = UserInforSerializer(read_only=True)
+    class Meta:
+        model = Project
+        fields = ["id", "name", "description", "created_by", "status"]
+        extra_kwargs = {"id": {"read_only":True}}
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        instance.status = validated_data.get('status', instance.status)
+        instance.save()
+        return instance
+    
 # Helpfull for include member inside the Project
 class AssignMemberToProjectSerializer(serializers.Serializer):
     # Include a many user from the User table
@@ -62,4 +81,4 @@ class GetDetailProjectSerilaizer(serializers.ModelSerializer):
     created_by = serializers.CharField(source='created_by.username', read_only=True)
     class Meta:
         model = Project
-        fields = ["name", "description", "created_by", "members", "status"]
+        fields = ["id", "name", "description", "created_by", "members", "status", "created_at"]

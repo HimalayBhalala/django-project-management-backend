@@ -25,10 +25,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Project.objects.all()
     
+    
     # Set a default serializer for check validate data or not
     def get_serializer(self, *args, **kwargs):
         return ProjectSerializer(*args, **kwargs)
     
+
     # Get all the project
     @handle_exception()
     def list(self, request):
@@ -65,6 +67,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             "data": serializers.data
         }, status=status.HTTP_201_CREATED)
     
+    
     # Used for getting detail of proejcts
     @handle_exception()
     @check_project_exists()
@@ -84,13 +87,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
             "data":GetDetailProjectSerilaizer(project).data
         })
 
+    
     # Update the project information    
     @handle_exception()
     @check_project_exists()
     def update(self, request, *args, **kwargs):
         user = request.user
         project = kwargs.get('project')
-        
+
         if project.created_by != user:
             return Response({
                 "status": "error",
@@ -98,12 +102,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         if request.method == "PUT":
-            serializers = self.get_serializer(project, data=request.data)
+            serializers = self.get_serializer(project, data=request.data, context={'user': user})
         else:
-            serializers = self.get_serializer(project, data=request.data, partial=True)
+            serializers = PartialUpdateProjectSerializer(project, data=request.data, partial=True)
 
         serializers.is_valid(raise_exception=True)
-        serializers.save(created_by=request.user)
+        serializers.save()
         return Response({
             "status": "success",
             "message": "Project updated successfully",
@@ -131,6 +135,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 "data" : []
             }, status=status.HTTP_204_NO_CONTENT)
     
+
     # Assign member to a project
     @handle_exception()
     @check_project_exists()
@@ -144,6 +149,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 "message": f"Assign member successfully for {project.name}",
                 "data" : GetDetailProjectSerilaizer(project).data
             }, status=status.HTTP_200_OK)
+    
     
     # Modify project status and mark as completed
     @handle_exception()

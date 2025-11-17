@@ -25,6 +25,12 @@ git version 2.39.1 (version may be different)
     Command: git clone github_repository_url
 
 -> Once project is clone so include a .env file and also set a require secrets for run a Project.
+    # Include .env after project structure show like below,
+    =>  - accounts
+        - project_management
+        - projects
+        - virtual_env_name
+        - .env
 
 # Step 2:
 -> After cloning the repository, first create a virtual environment because it gives a separate environment for our project.
@@ -48,12 +54,9 @@ For example, install Django:
 -> To confirm which dependencies are installed:
     Command: pip list
 
--> If everything is right based on above instruction so include .env file from the root folder.
-    =>  - accounts
-        - project_management
-        - projects
-        - virtual_env_name
-        - .env
+-> In Linux System, Open terminal in vscode using press "Ctrl + ~"
+
+-> Once terminal open so set a project root directory path(here is django-project-management-backend)
 
 -> Use below command for migrations first (here migration is used to keep creating and updating model information),
     Command: python3 manage.py makemigrations

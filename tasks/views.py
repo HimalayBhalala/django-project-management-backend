@@ -7,6 +7,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 
 # Directory Module
 from .models import Project
@@ -217,8 +218,6 @@ class TaskViewSet(viewsets.ModelViewSet):
 # Helpfull for getting all the comment and also able to filter it
 class CommentViewSet(viewsets.ModelViewSet):
     
-    # Only authenticated user can able to show comments
-    permission_classes = [IsAuthenticated]
     
     # Perform operation on Comment Model
     queryset = Comment.objects.all()
@@ -231,3 +230,12 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     # Include fields set based filtering
     filterset_class = CommentFilter
+    
+    # Only authenticated user can able to show comments
+    permission_classes = [IsAuthenticated]
+
+    # Only get request allow restrict another methods
+    def get_permissions(self):
+        if self.request.method in ["POST", "PUT", "PATCH", "DELETE"]:
+            raise PermissionDenied({"permission": "Permission Denied not able to access this API"})
+        return [IsAuthenticated()]

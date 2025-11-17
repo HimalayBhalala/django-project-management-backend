@@ -141,8 +141,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @check_project_exists()
     @action(detail=True, methods=["post"], url_name='add-member', url_path='add-member')
     def assign_member(self, request, *args, **kwargs):
+        user = request.user
         project = kwargs.get('project')
-        serializers = AssignMemberToProjectSerializer(data=request.data, context={'user':request.user, 'project':project})
+        if project.created_by != user:
+            return Response({
+                "status": "error",
+                "message": "You do not have permission to assign a new member"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        serializers = AssignMemberToProjectSerializer(data=request.data, context={'user':user, 'project':project})
         serializers.is_valid(raise_exception=True)
         return Response({
                 "status": "success",

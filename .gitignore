@@ -1,0 +1,21 @@
+# Ignore platform dependency
+.vscode/
+.idea/
+
+# Ignore cache and compile file when push code in Github
+__pycache__/
+*.pyc
+
+# Ignore virtual environment and secrets while pushing code
+venv/
+.env
+
+# Ignore database
+db.sqlite3
+
+# Remove logger file while pushing code on github
+*.log
+
+# Ignore all migrations file
+*/migrations/*.py
+!*/migrations/__init__.py

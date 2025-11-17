@@ -164,6 +164,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 "message": "You do not have permission to mark a project as complete"
             }, status=status.HTTP_400_BAD_REQUEST)
         
+        if project.status == 'archived':
+            return Response({
+                "status": "success",
+                "message": "Project already archived so it is already completed"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
         if project.status == 'completed':
             return Response({
                 "status": "success",
